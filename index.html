@@ -2,10 +2,10 @@
 <html>
 <head>
   
-<meta name="description" content="Leaflet Hello World">
+<meta name="description" content="2020 Taiwan Temple Choropleth Map">
 	
 
-    <title>Leaflet Hello World</title>
+    <title>2020 Taiwan Temple Choropleth Map</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,6 @@
         body {
             padding: 0px;
             margin: 0px;
-            
         }
         
         html,
@@ -66,31 +65,32 @@
 		width:70%;
 		height:3.8vw;
 		font-family:Arial;
-		font-size:3vw;
+		font-size:2.3vw;
 		font-weight:bolder;
 		position:absolute;
 		z-index:2;
-		top:0;
+		top:0px;
 		left:15%;
 		border-radius:0 0 45px 45px;
-        
+        background:  rgba(255, 255, 255, 0.808);
+        opacity: 0.5
 
     </style>
 </head>
 <body>
-
+<div id="title">2020年臺灣寺廟統計圖（鄉鎮市區）</div>    
 <div id="mapid"></div>
-<div id="title">The Story Map Title</div>
+
 <script type="text/javascript" src="TaiwanTown.js"></script> <!--add geoJson -->
 <script>
-   
-    //加入底圖
+  
+    //加入底圖 
+	
     var mymap = L.map("mapid", {
             center: [23.7, 121],
-            zoom: 8,
+            zoom: 7,
             zoomControl: false, //false -> remove default zoom control
         });
-
     var osmLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
 		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> , <a href="https://www.mapbox.com/">Mapbox</a> ' 
@@ -208,7 +208,7 @@
     };
 
     legend.addTo(mymap);
-    mymap.attributionControl.addAttribution('Population data &copy; <a href="https://www.ris.gov.tw/app/portal/346">中華民國內政部戶政司</a>');
+    mymap.attributionControl.addAttribution('Temple data &copy; <a href="https://www.moi.gov.tw/cp.aspx?n=7572">中華民國內政部民政司</a>');
 
 
 
