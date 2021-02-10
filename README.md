@@ -1,4 +1,4 @@
-# 2020_Taiwan_Temple_Choropleth-Map
+# 2020_Taiwan_Temple_Choropleth_Map
 
 <h3>案例:2020年臺灣寺廟統計圖（鄉鎮市區）</h3>
 
