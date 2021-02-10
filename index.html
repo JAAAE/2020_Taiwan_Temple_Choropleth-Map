@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+<meta name="description" content="Leaflet Hello World">
+	
+
+    <title>Leaflet Hello World</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+<style>
+        body {
+            padding: 0px;
+            margin: 0px;
+            
+        }
+        
+        html,
+        body,
+        #mapid {
+            position: absolute; 
+            top:0; 
+            bottom:0; 
+            right:0; 
+            left:0; 
+            z-index:1;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 12px/15px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 5px;
+            opacity: 0.7;
+        }
+        
+        #title {	
+		text-align:center;
+		width:70%;
+		height:3.8vw;
+		font-family:Arial;
+		font-size:3vw;
+		font-weight:bolder;
+		position:absolute;
+		z-index:2;
+		top:0;
+		left:15%;
+		border-radius:0 0 45px 45px;
+        
+
+    </style>
+</head>
+<body>
+
+<div id="mapid"></div>
+<div id="title">The Story Map Title</div>
+<script type="text/javascript" src="TaiwanTown.js"></script> <!--add geoJson -->
+<script>
+   
+    //加入底圖
+    var mymap = L.map("mapid", {
+            center: [23.7, 121],
+            zoom: 8,
+            zoomControl: false, //false -> remove default zoom control
+        });
+
+    var osmLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> , <a href="https://www.mapbox.com/">Mapbox</a> ' 
+		,
+        id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+    }).addTo(mymap);
+
+    // add geoJson
+    L.geoJson(TaiwanTown).addTo(mymap);
+    
+    // moving zoom control to bottomright
+    L.control.zoom({
+    position: 'bottomleft'
+    }).addTo(mymap);
+
+    //add info
+    var info = L.control();
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+    // method that we will use to update the control based on feature properties passed
+    info.update = function (props) {
+        this._div.innerHTML = '<h4>寺廟數量</h4>' +  (props ?
+            '<b>' + props.TOWNNAME + '</b><br />' + props.Join_Count + ' 間'
+            : '移動滑鼠至各鄉鎮市區');
+    };
+
+    info.addTo(mymap);
+
+    // hypsometric map
+    function getColor(d) {
+    return d > 100  ? '#6a51a3' :
+           d > 50  ?  '#9e9ac8' :
+           d > 5   ?  '#cbc9e2' :
+                      '#f2f0f7' ;
+           
+    }
+    // geoJson color
+    function style(feature) {
+         return {
+            fillColor: getColor(feature.properties.Join_Count),
+            weight: 1,
+         opacity: 1,
+         color: 'white',
+         dashArray: '1',
+         fillOpacity: 0.9
+        };
+    }
+
+    //hover highlight
+    function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: 'blue',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+        info.update(layer.feature.properties);
+		
+	}
+
+    
+    var geojson;
+    //reset highlight
+    function resetHighlight(e) {
+        geojson.resetStyle(e.target);
+        info.update();
+    }
+    // zoom to when click county
+    function zoomToFeature(e) {
+        mymap.fitBounds(e.target.getBounds());
+    }
+    // function:mouse and click
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    geojson = L.geoJson(TaiwanTown, {
+        style: style,
+        onEachFeature: onEachFeature
+    }).addTo(mymap);
+
+    // add legend
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0, 5, 50, 100,],
+            labels = [];
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+
+        return div;
+    };
+
+    legend.addTo(mymap);
+    mymap.attributionControl.addAttribution('Population data &copy; <a href="https://www.ris.gov.tw/app/portal/346">中華民國內政部戶政司</a>');
+
+
+
+</script>
+
+  
+
+</body>
+</html>
