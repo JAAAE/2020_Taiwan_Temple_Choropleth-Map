@@ -180,7 +180,7 @@
     function zoomToFeature(e) {
         mymap.fitBounds(e.target.getBounds());
     }
-    // function:mouse and click
+    // function:over and out
     function onEachFeature(feature, layer) {
         layer.on({
             mouseover: highlightFeature,
