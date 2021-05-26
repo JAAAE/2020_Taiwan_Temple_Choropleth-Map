@@ -9,6 +9,5 @@ https://jaaae.github.io/2020_Taiwan_Temple_Choropleth_Map/
 
 + [Leaflet_Interactive Choropleth Map](https://leafletjs.com/examples/choropleth/)
 
-+ [Title example](http://geosupportsystem.altervista.org/mystorymap/storymap.html)
 
 + [ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3)
